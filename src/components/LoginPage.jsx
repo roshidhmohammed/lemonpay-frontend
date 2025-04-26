@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { axisoInstance } from "../utils/axiosInstance";
 
 // Alert
-import { Bounce, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { userLoginSuccess } from "../features/user/userLoginSlice";
 import { useDispatch } from "react-redux";
