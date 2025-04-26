@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 // logos
 import lemonpayLogo from "../assets/lemonpayLogo.svg";
@@ -11,8 +11,18 @@ import ellipse3Mobile from "../assets/ellipse2Mobile.svg";
 
 // components
 import LoginPage from "./LoginPage";
+import SignupPage from "./SignupPage";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const LoginSignupPageContainer = () => {
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.user);
+  const [currentComponent, setCurrentComponent] = useState("Sign In");
+
+  useEffect(() => {
+    user?.userInfo && navigate("/view-task");
+  }, []);
   return (
     <div
       className=" w-full h-screen  bg-cover relative "
@@ -61,7 +71,11 @@ const LoginSignupPageContainer = () => {
           className=" absolute left-0 bottom-0 h-40 bg-cover opacity-20 md:hidden block"
         />
       </div>
-      <div className=" flex md:justify-between justify-center md:mx-10 mt-10 items-end ">
+      <div
+        className={` flex md:justify-between justify-center md:mx-10  items-end ${
+          currentComponent === "Sign In" ? "mt-10" : "mt-0"
+        }`}
+      >
         <div className="  font-[600] lg:text-5xl text-3xl md:block hidden pb-5 ">
           <h1 className="text-[#FFFFFF] mb-2 tracking-wider">
             Join 8 Million Business
@@ -69,8 +83,11 @@ const LoginSignupPageContainer = () => {
           <h1 className=" text-[#DBD55B] mb-2">Powering Growth with</h1>
           <h1 className="text-[#FFFFFF] tracking-wider">Lemonpay!</h1>
         </div>
-
-        <LoginPage />
+        {currentComponent === "Sign In" ? (
+          <LoginPage setCurrentComponent={setCurrentComponent} />
+        ) : (
+          <SignupPage setCurrentComponent={setCurrentComponent} />
+        )}
       </div>
     </div>
   );

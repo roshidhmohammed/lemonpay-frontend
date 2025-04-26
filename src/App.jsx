@@ -1,12 +1,14 @@
-import './App.css'
-import Pages from './components/Pages'
+import "./App.css";
+import AllRoutes from "./route/Allroutes";
+import Alert from "./components/Alert";
 
 function App() {
   return (
-    <div className=' font-nunito'>
-    <Pages/>
+    <div className=" font-nunito">
+      <AllRoutes />
+      <Alert />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

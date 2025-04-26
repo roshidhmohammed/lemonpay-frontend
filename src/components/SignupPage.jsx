@@ -1,80 +1,80 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
 // Form
 import { useForm } from "react-hook-form";
 
-// Api
-import { axisoInstance } from "../utils/axiosInstance";
-
 // Alert
 import { Bounce, toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import { userLoginSuccess } from "../features/user/userLoginSlice";
-import { useDispatch } from "react-redux";
 
-const LoginPage = ({ setCurrentComponent }) => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+// Axios
+import { axisoInstance } from "../utils/axiosInstance";
+
+const SignupPage = ({ setCurrentComponent }) => {
   const [loading, setLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm({
     defaultValues: {
       email: "",
       password: "",
+      confirmPassword: "",
       rememberMe: false,
     },
   });
 
-  const handleSignUp = () => {
-    setCurrentComponent("Sign Up");
+  const handleSignIn = () => {
+    setCurrentComponent("Sign In");
   };
 
-  const submitSignin = async (data) => {
+  const submitSignUp = async (data) => {
+    if (data.password !== data.confirmPassword) {
+      toast.error("Passwords do not match");
+    }
+
+    // const formData = new FormData();
+    // formData.append("email", data.email);
+    // formData.append("password", data.password);
+    // formData.append("confirmPassword", data.confirmPassword);
     const email = data.email;
     const password = data.password;
+    const confirmPassword = data.confirmPassword;
 
     setLoading(true);
 
     await axisoInstance
-      .post("/api/user/sign-in", { email: email, password: password })
-
+      .post("/api/user/sign-up", {
+        email: email,
+        password: password,
+        confirmPassword: confirmPassword,
+      })
       .then((res) => {
-        setLoading(false);
-        console.log(res.data.message);
-        localStorage.setItem(
-          "userInfo",
-          JSON.stringify(res?.data?.user?.token)
-        );
-        dispatch(userLoginSuccess(localStorage.getItem("userInfo")));
-        toast.success(`${res.data.message}`);
-
-        setTimeout(() => {
-          navigate("/view-task");
-        }, 3000);
-
-        if (data.rememberMe) {
-          localStorage.setItem("userEmail", data.email);
-        } else {
-          sessionStorage.setItem("userEmail", data.email);
+        if (res.data.success) {
+          setLoading(false);
+          toast.success(`${res.data.message}`);
+          if (data.rememberMe) {
+            localStorage.setItem("userEmail", data.email);
+          } else {
+            sessionStorage.setItem("userEmail", data.email);
+          }
         }
       })
-
       .catch((error) => {
-        const errorMessage =
-          error.response?.data?.message || "Something went wrong";
         setLoading(false);
-        console.log(error.message);
-        toast.error(`${errorMessage}`);
+        if (error.response && error.response.data) {
+          toast.error(`${error.response.data.message}`);
+        } else {
+          toast.error("Something went wrong");
+        }
       });
   };
   return (
-    <div className="  flex justify-center flex-col  font-semibold text-[#FFFFFF] md:mr-20 z-50 md:pt-0  pt-20  ">
+    <div className="  flex justify-center flex-col  font-semibold text-[#FFFFFF] md:mr-20 z-50 md:pt-0  pt-32  ">
       <h1 className=" tracking-wide lg:text-[36px] sm:text-[30px] text-[28px]  ">
-        Welcome Login System
+        Welcome Sign Up System
       </h1>
       <h1 className=" tracking-wide text-[20px]  mt-3 ">
         Your gateway to seamless
@@ -84,7 +84,7 @@ const LoginPage = ({ setCurrentComponent }) => {
       </h1>
 
       <form
-        onSubmit={handleSubmit(submitSignin)}
+        onSubmit={handleSubmit(submitSignUp)}
         className=" mt-5 text-lg tracking-wider h-60  flex flex-col"
       >
         <div className="">
@@ -100,7 +100,7 @@ const LoginPage = ({ setCurrentComponent }) => {
               },
             })}
             defaultValue=""
-            className=" p-2 my-2 border w-full rounded-lg  text-md font-normal bg-[#E6E1FAA3]"
+            className=" p-2 my-2 border w-full rounded-lg text-md font-normal bg-[#E6E1FAA3]"
           />
           {errors.email && (
             <p className=" text-red-700 text-sm font-bold brightness-200  ">
@@ -127,11 +127,30 @@ const LoginPage = ({ setCurrentComponent }) => {
               },
             })}
             defaultValue=""
-            className=" p-2 mt-2 w-full border rounded-lg text-md font-normal  bg-[#E6E1FAA3]"
+            className=" p-2 mt-2 w-full border rounded-lg font-normal text-md text-gray-600 bg-[#E6E1FAA3]"
           />
           {errors.password && (
-            <p className=" text-red-700 font-bold text-sm  brightness-200 text-wrap max-w-[400px]">
+            <p className=" text-red-700  text-sm font-bold brightness-200  text-wrap max-w-[400px]">
               {errors.password.message}
+            </p>
+          )}
+        </div>
+        <div className="">
+          <label className=" text-sm font-medium "> Password</label>
+          <input
+            type="password"
+            placeholder="Min 8 characters"
+            {...register("confirmPassword", {
+              required: "Confirm Password is required",
+              validate: (value) =>
+                value === watch("password") || "Passwords do not match",
+            })}
+            defaultValue=""
+            className=" p-2 mt-2 w-full border rounded-lg font-normal text-md text-gray-600 bg-[#E6E1FAA3]"
+          />
+          {errors.password && (
+            <p className=" text-red-700  text-sm font-bold brightness-200  text-wrap max-w-[400px]">
+              {errors.confirmPassword.message}
             </p>
           )}
         </div>
@@ -139,14 +158,14 @@ const LoginPage = ({ setCurrentComponent }) => {
           <div className=" flex gap-2 items-center">
             <input
               type="checkbox"
-              size={50}
               {...register("rememberMe")}
+              size={50}
               className=""
             />
             <p>Remember me</p>
           </div>
-          <button className=" text-sm" onClick={() => handleSignUp()}>
-            Sign up
+          <button className=" text-sm" onClick={() => handleSignIn()}>
+            Sign In
           </button>
         </div>
         <button
@@ -154,11 +173,11 @@ const LoginPage = ({ setCurrentComponent }) => {
           disabled={loading}
           className=" w-full mt-3 bg-[#FFFFFF] text-gray-800 py-3 text-sm font-bold hover:cursor-pointer rounded-lg"
         >
-          {loading ? "Sign In..." : "Sign In"}
+          {loading ? " Sign Up..." : " Sign Up"}
         </button>
       </form>
     </div>
   );
 };
 
-export default LoginPage;
+export default SignupPage;
