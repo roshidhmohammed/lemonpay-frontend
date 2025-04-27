@@ -44,7 +44,6 @@ const LoginPage = ({ setCurrentComponent }) => {
 
       .then((res) => {
         setLoading(false);
-        console.log(res.data.message);
         localStorage.setItem(
           "userInfo",
           JSON.stringify(res?.data?.user?.token)
@@ -67,7 +66,6 @@ const LoginPage = ({ setCurrentComponent }) => {
         const errorMessage =
           error.response?.data?.message || "Something went wrong";
         setLoading(false);
-        console.log(error.message);
         toast.error(`${errorMessage}`);
       });
   };

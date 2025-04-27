@@ -34,15 +34,9 @@ const SignupPage = ({ setCurrentComponent }) => {
     if (data.password !== data.confirmPassword) {
       toast.error("Passwords do not match");
     }
-
-    // const formData = new FormData();
-    // formData.append("email", data.email);
-    // formData.append("password", data.password);
-    // formData.append("confirmPassword", data.confirmPassword);
     const email = data.email;
     const password = data.password;
     const confirmPassword = data.confirmPassword;
-
     setLoading(true);
 
     await axisoInstance

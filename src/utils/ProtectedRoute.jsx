@@ -7,13 +7,10 @@ import { useDispatch, useSelector } from "react-redux";
 
 const ProtectedRoute = () => {
   const user = useSelector((state) => state.user);
-
-  console.log(user?.userInfo);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(userAuthentication());
   }, []);
-
   return user?.userInfo ? <Outlet /> : <Navigate to="/" />;
 };
 

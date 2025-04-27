@@ -1,17 +1,18 @@
-import React from "react";
-import { Controller, useForm } from "react-hook-form";
+import React, { useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { axisoInstance } from "../utils/axiosInstance";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 
-const AddTask = () => {
+const EditTask = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty },
     control,
     reset,
   } = useForm({
@@ -21,44 +22,67 @@ const AddTask = () => {
       datePicker: null,
     },
   });
-  const handleSave = async (data) => {
-    const taskName = data.enterTaskName;
-    const description = data.description;
-    const date = data.datePicker;
 
+  const fetchTask = async () => {
     const config = {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("userInfo")}`,
       },
     };
+
     await axisoInstance
-      .post(
-        "/api/user/add-task",
-        { taskName: taskName, description: description, date: date },
-        config
-      )
+      .get(`/api/user/single-task/${id}`, config)
       .then((res) => {
-        if (res.data.success) {
-          toast.success("Task created successfully");
-          reset();
-          navigate("/view-task");
-        }
+        const fetchedTask = res.data.task;
+        reset({
+          enterTaskName: fetchedTask.taskName,
+          description: fetchedTask.description,
+          datePicker: new Date(fetchedTask.dueDate),
+        });
       })
       .catch((error) => {
-        toast.error(error.response?.data?.message || "Something went wrong");
+        toast.error(
+          error.response?.data?.message || "Failed to fetch the tasks"
+        );
       });
   };
 
-  const handleCancel = () => {
-    reset();
+  useEffect(() => {
+    fetchTask();
+  }, []);
+
+  const handleEdit = async (data) => {
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("userInfo")}`,
+        },
+      };
+
+      const payload = {
+        taskName: data.enterTaskName,
+        description: data.description,
+        dueDate: data.datePicker,
+      };
+
+      await axisoInstance
+        .put(`/api/user/edit-task/${id}`, payload, config)
+        .then((res) => {
+          toast.success(res.data.message);
+          navigate("/view-task");
+        });
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to update the task");
+    }
   };
 
   return (
     <div className="flex justify-center h-screen items-center flex-col my-auto">
-      <h1 className="text-[#000000] font-bold text-3xl">Add Task</h1>
+      <h1 className="text-[#000000] font-bold text-3xl">Edit Task</h1>
 
       <form
-        onSubmit={handleSubmit(handleSave)}
+        onSubmit={handleSubmit(handleEdit)}
         className="sm:w-[500px] w-[350px] mt-10"
       >
         <div>
@@ -123,20 +147,15 @@ const AddTask = () => {
         <div className="flex flex-col gap-3 justify-center items-center mt-5">
           <button
             type="submit"
+            disabled={!isDirty}
             className="bg-[#1E3BA3] px-12 text-[#FFFFFF] p-4 rounded-full text-lg hover:cursor-pointer hover:bg-[#353e60f5]"
           >
             Save
           </button>
         </div>
       </form>
-      <button
-        onClick={() => handleCancel()}
-        className="mt-3 px-10 text-[#000000] p-4 rounded-full text-lg hover:cursor-pointer hover:bg-[#bfc0c1f5]"
-      >
-        Cancel
-      </button>
     </div>
   );
 };
 
-export default AddTask;
+export default EditTask;
