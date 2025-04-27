@@ -22,8 +22,8 @@ Currently, two official plugins are available:
    - Create a .env file in the root of the project folder (next to package.json), and add the following environment variables:
         - VITE_ENV_BACKEND_URL='http://localhost:8000' # URL for the local backend server
 
-   - After setting up the project, you can now run the frontend application locally. To start the development server, use the  following command:
-        - use npm run dev command
+   - After setting up the project, you can now run the frontend application locally. To start the development server, use the  following command on the terminal:
+        -  npm run dev 
 
    - Once the development server is running, open your web browser and navigate to:
         - eg: http://localhost:3000 # hit the url showing on the terminal on the browser
