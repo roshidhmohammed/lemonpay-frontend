@@ -15,7 +15,7 @@ const ViewTask = () => {
 
   useEffect(() => {
     fetchTasks();
-  }, []);
+  });
 
   const fetchTasks = async () => {
     const config = {

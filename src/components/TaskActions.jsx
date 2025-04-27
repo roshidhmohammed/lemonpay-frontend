@@ -21,7 +21,6 @@ const TaskActions = ({ taskId, showActions, setShowActions }) => {
         .then((res) => {
           toast.success(res.data.message || "Task deleted successfully");
           setShowActions(!showActions);
-          window.location.reload();
         })
         .catch((error) => {
           toast.error(
