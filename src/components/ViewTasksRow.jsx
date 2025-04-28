@@ -1,5 +1,6 @@
 import React from "react";
 import { HiOutlineDotsVertical } from "react-icons/hi";
+import { converDateFormat } from "../helpers/converDateFormat";
 
 const ViewTasksRow = ({
   task,
@@ -9,23 +10,6 @@ const ViewTasksRow = ({
   setTaskId,
 }) => {
   const { taskName, description, dueDate, _id } = task;
-
-  const converDateFormat = (ISODate) => {
-    const isoDate = ISODate;
-
-    const date = new Date(isoDate);
-
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-
-    let hours = date.getHours();
-    const minutes = String(date.getMinutes()).padStart(2, "0");
-    const ampm = hours >= 12 ? "pm" : "am";
-    hours = hours % 12 || 12;
-    const formattedDate = `${day}/${month}/${year} ${hours}:${minutes} ${ampm}`;
-    return formattedDate;
-  };
 
   const handleActions = (id) => {
     setShowActions(!showActions);

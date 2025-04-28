@@ -59,7 +59,7 @@ const AddTask = () => {
 
       <form
         onSubmit={handleSubmit(handleSave)}
-        className="sm:w-[500px] w-[350px] mt-10"
+        className="sm:w-[500px] w-[300px] mt-10"
       >
         <div>
           <input
@@ -109,7 +109,7 @@ const AddTask = () => {
                 dateFormat="d/MM/yyyy hh:mm aa"
                 minDate={new Date()}
                 placeholderText="Select Date and Time"
-                className="p-2 px-5 my-2 h-16 sm:w-[500px] w-[350px] rounded-lg bg-[#efefef]"
+                className="p-2 px-5 my-2 h-16 sm:w-[500px] w-[300px] rounded-lg bg-[#efefef]"
               />
             )}
           />
